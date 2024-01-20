@@ -58,25 +58,10 @@ app.post("/b2bbroker", async (req, res) => {
 });
 
 app.get("/currencyapi", async (req, res) => {
-  // const client = new currencyapi('cur_live_A6rW1WVXAn9ieeKaFRMnzreK19PYAOUjCfU5RYcR');
-  // client.latest({
-  //     base_currency: 'USD',
-  //     currencies: 'EUR'
-  // }).then(response => {
-  //     res.send(response);
-  //     console.log(response)
-  // });
-
-
 var requestOptions = {
   method: 'GET',
   redirect: 'follow'
 };
-
-// AUD - USD
-// EUR/USD
-// GBD/USD
-// GPP/JPY
 
 let overall = [];
 
@@ -108,6 +93,57 @@ await fetch("https://api.currencyapi.com/v3/latest?apikey=cur_live_A6rW1WVXAn9ie
 
   res.send(overall);
   console.log(overall);
+
+});
+
+app.get("/metalAPI", async (req, res) => {
+  var requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+
+  let overall = [];
+  
+  await fetch("https://metals-api.com/api/latest?access_key=3wlj1zpce4fkv487w5m60biyci9sn85yqbs3efwvks1x5c3q5futp8ize9lv&base=EUR&symbols=XAU", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(JSON.parse(result));
+      overall = [...overall, JSON.parse(result).rates];
+    })
+    .catch(error => console.log('error', error));
+
+    await fetch("https://metals-api.com/api/latest?access_key=3wlj1zpce4fkv487w5m60biyci9sn85yqbs3efwvks1x5c3q5futp8ize9lv&base=USD&symbols=XAG", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      overall = [...overall, JSON.parse(result).rates];
+    })
+    .catch(error => console.log('error', error));
+
+    await fetch("https://metals-api.com/api/latest?access_key=3wlj1zpce4fkv487w5m60biyci9sn85yqbs3efwvks1x5c3q5futp8ize9lv&base=USD&symbols=XAU", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      overall = [...overall, JSON.parse(result).rates];
+    })
+    .catch(error => console.log('error', error));
+
+    await fetch("https://metals-api.com/api/latest?access_key=3wlj1zpce4fkv487w5m60biyci9sn85yqbs3efwvks1x5c3q5futp8ize9lv&base=AUD&symbols=XAU", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      overall = [...overall, JSON.parse(result).rates];
+    })
+    .catch(error => console.log('error', error));
+
+    await fetch("https://metals-api.com/api/latest?access_key=3wlj1zpce4fkv487w5m60biyci9sn85yqbs3efwvks1x5c3q5futp8ize9lv&base=AUD&symbols=XAG", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      overall = [...overall, JSON.parse(result).rates];
+    })
+    .catch(error => console.log('error', error));
+
+    res.send(overall);
+    console.log(overall);
+
+
 
 });
 
