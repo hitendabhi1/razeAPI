@@ -1,6 +1,8 @@
-const express = require("express");
-const cors = require("cors");
-const fetch = require("node-fetch");
+import express from "express";
+import cors from "cors";
+import fetch from "node-fetch";
+import currencyapi from '@everapi/currencyapi-js';
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -53,6 +55,60 @@ app.post("/b2bbroker", async (req, res) => {
     console.error('Error:', error);
     res.status(500).send(error);
   }
+});
+
+app.get("/currencyapi", async (req, res) => {
+  // const client = new currencyapi('cur_live_A6rW1WVXAn9ieeKaFRMnzreK19PYAOUjCfU5RYcR');
+  // client.latest({
+  //     base_currency: 'USD',
+  //     currencies: 'EUR'
+  // }).then(response => {
+  //     res.send(response);
+  //     console.log(response)
+  // });
+
+
+var requestOptions = {
+  method: 'GET',
+  redirect: 'follow'
+};
+
+// AUD - USD
+// EUR/USD
+// GBD/USD
+// GPP/JPY
+
+let overall = [];
+
+await fetch("https://api.currencyapi.com/v3/latest?apikey=cur_live_A6rW1WVXAn9ieeKaFRMnzreK19PYAOUjCfU5RYcR&base_currency=AUD&currencies[]=USD", requestOptions)
+  .then(response => response.text())
+  .then(result => {
+    console.log(JSON.parse(result).data);
+    overall = [...overall, JSON.parse(result).data];
+  })
+  .catch(error => console.log('error', error));
+await fetch("https://api.currencyapi.com/v3/latest?apikey=cur_live_A6rW1WVXAn9ieeKaFRMnzreK19PYAOUjCfU5RYcR&base_currency=EUR&currencies[]=USD", requestOptions)
+  .then(response => response.text())
+  .then(result => {
+    overall = [...overall, JSON.parse(result).data];
+  })
+  .catch(error => console.log('error', error));
+await fetch("https://api.currencyapi.com/v3/latest?apikey=cur_live_A6rW1WVXAn9ieeKaFRMnzreK19PYAOUjCfU5RYcR&base_currency=GBP&currencies[]=USD", requestOptions)
+  .then(response => response.text())
+  .then(result => {
+    overall = [...overall, JSON.parse(result).data];
+  })
+  .catch(error => console.log('error', error));
+await fetch("https://api.currencyapi.com/v3/latest?apikey=cur_live_A6rW1WVXAn9ieeKaFRMnzreK19PYAOUjCfU5RYcR&base_currency=GBP&currencies[]=JPY", requestOptions)
+  .then(response => response.text())
+  .then(result => {
+    overall = [...overall, JSON.parse(result).data];
+  })
+  .catch(error => console.log('error', error));
+
+  res.send(overall);
+  console.log(overall);
+
 });
 
 app.listen(process.env.PORT || 3001, function () {
